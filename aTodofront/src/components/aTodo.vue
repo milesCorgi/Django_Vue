@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import Qs from 'qs'
 export default {
   name: 'home',
   data () {
@@ -40,7 +41,9 @@ export default {
   },
   methods: {
     addtodo () {
-      this.$http.post('http://127.0.0.1:8000/api/add_todo', this.input)
+      let postdata
+      postdata = Qs.stringify({'Todo_name': this.input})
+      this.$http.post('http://127.0.0.1:8000/api/add_todo', postdata)
         .then((response) => {
           console.log(response)
           let res = response.data

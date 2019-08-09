@@ -13,9 +13,7 @@ from django.views.decorators.http import require_http_methods
 def add_todo(request):
     response = {}
     try:
-        listRequest = list(request.POST.dict().keys())
-        print(listRequest[0])
-        todo = Todo(Todo_name=listRequest[0])
+        todo = Todo(Todo_name=request.POST.get('Todo_name'))
         todo.save()
         response['msg'] = 'success'
         response['error_num'] = 0
