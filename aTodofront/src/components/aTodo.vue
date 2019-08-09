@@ -40,14 +40,14 @@ export default {
   },
   methods: {
     addtodo () {
-      this.$http.get('http://127.0.0.1:8000/api/add_todo?Todo_name=' + this.input)
+      this.$http.post('http://127.0.0.1:8000/api/add_todo', this.input)
         .then((response) => {
           console.log(response)
-          let res = JSON.parse(response.bodyText)
+          let res = response.data
           if (res.error_num === 0) {
             this.showtodos()
           } else {
-            alert('新增书籍失败，请重试')
+            alert('新增Todo失败，请重试')
             console.log(res['msg'])
           }
         })
@@ -55,13 +55,12 @@ export default {
     showtodos () {
       this.$http.get('http://127.0.0.1:8000/api/show_todos')
         .then((response) => {
-          var res = JSON.parse(response.bodyText)
-          console.log(res)
+          let res = response.data
           if (res.error_num === 0) {
             this.todoList = res['list']
             console.log(this.todoList)
           } else {
-            this.$message.error('查询书籍失败')
+            this.$message.error('查询Todo失败')
             console.log(res['msg'])
           }
         })

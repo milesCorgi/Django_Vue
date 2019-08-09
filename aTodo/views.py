@@ -9,15 +9,17 @@ from aTodo.models import Todo
 from django.views.decorators.http import require_http_methods
 
 
-@require_http_methods(["GET"])
+@require_http_methods(["POST"])
 def add_todo(request):
     response = {}
     try:
-        todo = Todo(Todo_name=request.GET.get('Todo_name'))
+        listRequest = list(request.POST.dict().keys())
+        print(listRequest[0])
+        todo = Todo(Todo_name=listRequest[0])
         todo.save()
         response['msg'] = 'success'
         response['error_num'] = 0
-    except  Exception as e:
+    except Exception as e:
         response['msg'] = str(e)
         response['error_num'] = 1
 
