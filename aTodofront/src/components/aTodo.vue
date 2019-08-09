@@ -3,7 +3,7 @@
     <div style="margin-top: 10px;margin-bottom: 10px">
       <el-row>
         <el-input v-model="input" placeholder="新Todo" style="display:inline-table; width: 30%"></el-input>
-        <el-button type="primary" @click="addtodo">新增</el-button>
+        <el-button type="primary" @click="addTodo">新增</el-button>
       </el-row>
     </div>
 
@@ -19,10 +19,22 @@
           <el-table-column prop="add_time" label="添加时间" min-width="100">
             <template scope="scope"> {{ scope.row.fields.add_time }} </template>
           </el-table-column>
+          <el-table-column label="操作" min-width="100">
+            <template scope="scope">
+              <i class="el-icon-edit" @click="openEditDialog" style="cursor:pointer">编辑</i>
+              <i class="el-icon-delete" @click="delete_todo(scope.row.fields.Todo_name)" style="cursor:pointer" scope="scope">删除</i>
+            </template>
+
+          </el-table-column>
         </el-table>
       </el-row>
     </div>
 
+    <el-dialog
+      :visible.sync="openEditDialogFlag"
+      @close="openEditDialogFlag = false">
+      先占位
+    </el-dialog>
   </div>
 </template>
 
@@ -33,17 +45,17 @@ export default {
   data () {
     return {
       input: '',
-      todoList: []
+      todoList: [],
+      openEditDialogFlag: false
     }
   },
   mounted: function () {
     this.showtodos()
   },
   methods: {
-    addtodo () {
-      let postdata
-      postdata = Qs.stringify({'Todo_name': this.input})
-      this.$http.post('http://127.0.0.1:8000/api/add_todo', postdata)
+    addTodo () {
+      let posData = Qs.stringify({'Todo_name': this.input})
+      this.$http.post('http://127.0.0.1:8000/api/add_todo', posData)
         .then((response) => {
           console.log(response)
           let res = response.data
@@ -67,6 +79,23 @@ export default {
             console.log(res['msg'])
           }
         })
+    },
+    delete_todo (TodoName) {
+      let postdata = Qs.stringify({'Todo_name': TodoName})
+      this.$http.post('http://127.0.0.1:8000/api/delete_todo', postdata)
+        .then((response) => {
+          console.log(response)
+          let res = response.data
+          if (res.error_num === 0) {
+            this.showtodos()
+          } else {
+            alert('新增Todo失败，请重试')
+            console.log(res['msg'])
+          }
+        })
+    },
+    openEditDialog () {
+      this.openEditDialogFlag = true
     }
   }
 }

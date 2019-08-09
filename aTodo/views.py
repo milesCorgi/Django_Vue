@@ -24,6 +24,19 @@ def add_todo(request):
     return JsonResponse(response)
 
 
+def delete_todo(request):
+    response = {}
+    try:
+        todo = Todo.objects.filter(Todo_name=request.POST.get('Todo_name'))
+        todo.delete()
+        response['msg'] = 'success'
+        response['error_num'] = 0
+    except Exception as e:
+        response['msg'] = str(e)
+        response['error_num'] = 1
+
+    return JsonResponse(response)
+
 @require_http_methods(["GET"])
 def show_todos(request):
     response = {}
