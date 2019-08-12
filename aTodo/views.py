@@ -50,3 +50,30 @@ def show_todos(request):
         response['error_num'] = 1
 
     return JsonResponse(response)
+
+
+def edit_todos(request, todo_id):
+    response = {}
+    if request.method == "GET":
+        try:
+            todo = Todo.objects.filter(id = todo_id)
+            print(todo)
+            response['list'] = json.loads(serializers.serialize("json", todo))
+            response['msg'] = 'success'
+            response['error_num'] = 0
+        except  Exception as e:
+            response['msg'] = str(e)
+            response['error_num'] = 1
+        return JsonResponse(response)
+    else:
+        try:
+            todo = Todo.objects.get(id=todo_id)
+            todo.Todo_name = Todo(Todo_name=request.POST.get('Todo_name'))
+            todo.save()
+            response['msg'] = 'success'
+            response['error_num'] = 0
+        except Exception as e:
+            response['msg'] = str(e)
+            response['error_num'] = 1
+
+        return JsonResponse(response)

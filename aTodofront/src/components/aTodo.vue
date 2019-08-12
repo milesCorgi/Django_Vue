@@ -21,7 +21,7 @@
           </el-table-column>
           <el-table-column label="操作" min-width="100">
             <template scope="scope">
-              <i class="el-icon-edit" @click="openEditDialog" style="cursor:pointer">编辑</i>
+              <i class="el-icon-edit" @click="openEditDialog(scope.row.pk)" style="cursor:pointer">编辑</i>
               <i class="el-icon-delete" @click="delete_todo(scope.row.fields.Todo_name)" style="cursor:pointer" scope="scope">删除</i>
             </template>
 
@@ -33,7 +33,7 @@
     <el-dialog
       :visible.sync="openEditDialogFlag"
       @close="openEditDialogFlag = false">
-      先占位
+      <el-input v-model ="toBeEditBody" type="textarea" style="display:inline-table; width: 30%"></el-input>
     </el-dialog>
   </div>
 </template>
@@ -46,7 +46,9 @@ export default {
     return {
       input: '',
       todoList: [],
-      openEditDialogFlag: false
+      openEditDialogFlag: false,
+      toBeEditId: 0,
+      toBeEditBody: ''
     }
   },
   mounted: function () {
@@ -94,8 +96,20 @@ export default {
           }
         })
     },
-    openEditDialog () {
+    openEditDialog (id) {
       this.openEditDialogFlag = true
+      this.toBeEditId = id
+      this.$http.get('http://127.0.0.1:8000/api/edit_todos/' + this.toBeEditId)
+        .then((response) => {
+          let res = response.data
+          if (res.error_num === 0) {
+            console.log(res['list'][0].fields.Todo_name)
+            this.toBeEditBody = res['list'][0].fields.Todo_name
+          } else {
+            this.$message.error('查询Todo失败')
+            console.log(res['msg'])
+          }
+        })
     }
   }
 }
