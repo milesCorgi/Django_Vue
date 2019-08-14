@@ -3,7 +3,7 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import render
 from aTodo.models import Todo
-
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 # Create your views here.
 from django.views.decorators.http import require_http_methods
@@ -13,7 +13,7 @@ from django.views.decorators.http import require_http_methods
 def add_todo(request):
     response = {}
     try:
-        todo = Todo(Todo_name=request.POST.get('Todo_name'))
+        todo = Todo(Todo_body=request.POST.get('Todo_body'))
         todo.save()
         response['msg'] = 'success'
         response['error_num'] = 0
@@ -27,7 +27,7 @@ def add_todo(request):
 def delete_todo(request):
     response = {}
     try:
-        todo = Todo.objects.filter(Todo_name=request.POST.get('Todo_name'))
+        todo = Todo.objects.filter(Todo_body=request.POST.get('Todo_body'))
         todo.delete()
         response['msg'] = 'success'
         response['error_num'] = 0
@@ -51,7 +51,7 @@ def show_todos(request):
 
     return JsonResponse(response)
 
-
+@csrf_exempt
 def edit_todos(request, todo_id):
     response = {}
     if request.method == "GET":
@@ -68,7 +68,9 @@ def edit_todos(request, todo_id):
     else:
         try:
             todo = Todo.objects.get(id=todo_id)
-            todo.Todo_name = Todo(Todo_name=request.POST.get('Todo_name'))
+            print(request.POST.get('Todo_body'))
+            todo.Todo_body = request.POST.get('Todo_body')
+            # todo.update_time = request.POST.get('Todo_body')
             todo.save()
             response['msg'] = 'success'
             response['error_num'] = 0

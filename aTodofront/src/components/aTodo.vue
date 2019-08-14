@@ -10,19 +10,22 @@
     <div>
       <el-row >
         <el-table :data="todoList" style="width: 100%" border>
-          <el-table-column prop="id" label="编号" min-width="100">
-            <template scope="scope"> {{ scope.row.pk }} </template>
-          </el-table-column>
           <el-table-column prop="book_name" label="Todo" min-width="100">
-            <template scope="scope"> {{ scope.row.fields.Todo_name }} </template>
+            <template scope="scope"> {{ scope.row.fields.Todo_body }} </template>
           </el-table-column>
           <el-table-column prop="add_time" label="添加时间" min-width="100">
             <template scope="scope"> {{ scope.row.fields.add_time }} </template>
           </el-table-column>
+                    <el-table-column prop="id" label="更新时间" min-width="100">
+            <template scope="scope"> {{ scope.row.fields.update_time }} </template>
+          </el-table-column>
+          <el-table-column prop="id" label="状态" min-width="100">
+            <template scope="scope"> {{ scope.row.fields.status }} </template>
+          </el-table-column>
           <el-table-column label="操作" min-width="100">
             <template scope="scope">
-              <i class="el-icon-edit" @click="openEditDialog(scope.row.pk)" style="cursor:pointer">编辑</i>
-              <i class="el-icon-delete" @click="delete_todo(scope.row.fields.Todo_name)" style="cursor:pointer" scope="scope">删除</i>
+              <i class="el-icon-edit" @click="openEditDialog(scope.row.pk)" style="cursor:pointer;margin-right: 20px">编辑</i>
+              <i class="el-icon-delete" @click="delete_todo(scope.row.fields.Todo_body)" style="cursor:pointer" scope="scope">删除</i>
             </template>
 
           </el-table-column>
@@ -33,7 +36,8 @@
     <el-dialog
       :visible.sync="openEditDialogFlag"
       @close="openEditDialogFlag = false">
-      <el-input v-model ="toBeEditBody" type="textarea" style="display:inline-table; width: 30%"></el-input>
+      <el-input v-model ="toBeEditBody" type="input" style="display:inline-table; width: 50%"></el-input>
+      <el-button type="primary" @click="editTodo">修改</el-button>
     </el-dialog>
   </div>
 </template>
@@ -56,8 +60,8 @@ export default {
   },
   methods: {
     addTodo () {
-      let posData = Qs.stringify({'Todo_name': this.input})
-      this.$http.post('http://127.0.0.1:8000/api/add_todo', posData)
+      let posData = Qs.stringify({'Todo_body': this.input})
+      this.$http.post('http://127.0.0.1:8000/api/add_todos', posData)
         .then((response) => {
           console.log(response)
           let res = response.data
@@ -83,12 +87,27 @@ export default {
         })
     },
     delete_todo (TodoName) {
-      let postdata = Qs.stringify({'Todo_name': TodoName})
-      this.$http.post('http://127.0.0.1:8000/api/delete_todo', postdata)
+      let postdata = Qs.stringify({'Todo_body': TodoName})
+      this.$http.post('http://127.0.0.1:8000/api/delete_todos', postdata)
         .then((response) => {
           console.log(response)
           let res = response.data
           if (res.error_num === 0) {
+            this.showtodos()
+          } else {
+            alert('新增Todo失败，请重试')
+            console.log(res['msg'])
+          }
+        })
+    },
+    editTodo () {
+      let posData = Qs.stringify({'Todo_body': this.toBeEditBody})
+      this.$http.post('http://127.0.0.1:8000/api/edit_todos/' + this.toBeEditId, posData)
+        .then((response) => {
+          console.log(response)
+          let res = response.data
+          if (res.error_num === 0) {
+            this.openEditDialogFlag = false
             this.showtodos()
           } else {
             alert('新增Todo失败，请重试')
@@ -103,8 +122,8 @@ export default {
         .then((response) => {
           let res = response.data
           if (res.error_num === 0) {
-            console.log(res['list'][0].fields.Todo_name)
-            this.toBeEditBody = res['list'][0].fields.Todo_name
+            console.log(res['list'][0].fields.Todo_body)
+            this.toBeEditBody = res['list'][0].fields.Todo_body
           } else {
             this.$message.error('查询Todo失败')
             console.log(res['msg'])
