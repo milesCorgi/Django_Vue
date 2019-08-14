@@ -67,6 +67,7 @@ export default {
           let res = response.data
           if (res.error_num === 0) {
             this.showtodos()
+            this.input = ''
           } else {
             alert('新增Todo失败，请重试')
             console.log(res['msg'])
