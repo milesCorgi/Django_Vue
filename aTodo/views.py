@@ -27,7 +27,7 @@ def add_todo(request):
 def delete_todo(request):
     response = {}
     try:
-        todo = Todo.objects.filter(Todo_body=request.POST.get('Todo_body'))
+        todo = Todo.objects.filter(id=request.POST.get('Todo_id'))
         todo.delete()
         response['msg'] = 'success'
         response['error_num'] = 0

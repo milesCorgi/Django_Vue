@@ -25,7 +25,7 @@
           <el-table-column label="操作" min-width="100">
             <template scope="scope">
               <i class="el-icon-edit" @click="openEditDialog(scope.row.pk)" style="cursor:pointer;margin-right: 20px">编辑</i>
-              <i class="el-icon-delete" @click="delete_todo(scope.row.fields.Todo_body)" style="cursor:pointer" scope="scope">删除</i>
+              <i class="el-icon-delete" @click="delete_todo(scope.row.pk)" style="cursor:pointer" scope="scope">删除</i>
             </template>
 
           </el-table-column>
@@ -86,8 +86,8 @@ export default {
           }
         })
     },
-    delete_todo (TodoName) {
-      let postdata = Qs.stringify({'Todo_body': TodoName})
+    delete_todo (id) {
+      let postdata = Qs.stringify({'Todo_id': id})
       this.$http.post('http://127.0.0.1:8000/api/delete_todos', postdata)
         .then((response) => {
           console.log(response)
