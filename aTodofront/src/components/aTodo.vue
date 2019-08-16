@@ -5,6 +5,21 @@
         <el-input v-model="input" placeholder="新Todo" style="display:inline-table; width: 30%"></el-input>
         <el-button type="primary" @click="addTodo">新增</el-button>
       </el-row>
+      <el-row>
+        <div class="block">
+          <el-date-picker
+            v-model="SearchDate"
+            align="right"
+            type="datetimerange"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :picker-options="pickerOptions">
+          </el-date-picker>
+          <el-button type="primary" @click="searchTodo">搜索</el-button>
+        </div>
+      </el-row>
     </div>
 
     <div>
@@ -52,7 +67,8 @@ export default {
       todoList: [],
       openEditDialogFlag: false,
       toBeEditId: 0,
-      toBeEditBody: ''
+      toBeEditBody: '',
+      SearchDate: []
     }
   },
   mounted: function () {
@@ -70,6 +86,24 @@ export default {
             this.input = ''
           } else {
             alert('新增Todo失败，请重试')
+            console.log(res['msg'])
+          }
+        })
+    },
+    searchTodo () {
+      let posData = Qs.stringify({'search_range': this.SearchDate})
+      this.$http.post('http://127.0.0.1:8000/api/search_todos', posData)
+        .then((response) => {
+          console.log(response)
+          let res = response.data
+          console.log(res)
+          if (res.error_num === 0) {
+            this.todoList = res['list']
+            this.input = ''
+          } else {
+            alert('查询Todo失败，请重试')
+            // 查询失败的时候，默认先显示全部的
+            this.showtodos()
             console.log(res['msg'])
           }
         })

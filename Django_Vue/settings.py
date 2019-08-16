@@ -111,11 +111,12 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 # 这个设成True的话，永远时区都是UTC
+# 但不知道为什么，这个过了Vue就没效了
 
 TIME_ZONE = 'Asia/Shanghai'
-#时区
+# 时区
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
