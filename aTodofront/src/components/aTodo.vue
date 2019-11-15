@@ -3,7 +3,7 @@
     <div style="margin-top: 10px;margin-bottom: 10px">
       <el-row>
         <el-input v-model="input" placeholder="新Todo" style="display:inline-table; width: 30%"></el-input>
-        <el-button type="primary" @click="addTodo">新增</el-button>
+        <el-button type="primary" @click="addTodo">新增1个ToDo</el-button>
       </el-row>
       <el-row>
         <div class="block">
@@ -77,7 +77,7 @@ export default {
   methods: {
     addTodo () {
       let posData = Qs.stringify({'Todo_body': this.input})
-      this.$http.post('http://127.0.0.1:8000/api/add_todos', posData)
+      this.$http.post('/api/add_todos', posData)
         .then((response) => {
           console.log(response)
           let res = response.data
@@ -92,7 +92,7 @@ export default {
     },
     searchTodo () {
       let posData = Qs.stringify({'search_range': this.SearchDate})
-      this.$http.post('http://127.0.0.1:8000/api/search_todos', posData)
+      this.$http.post('/api/search_todos', posData)
         .then((response) => {
           console.log(response)
           let res = response.data
@@ -109,7 +109,7 @@ export default {
         })
     },
     showtodos () {
-      this.$http.get('http://127.0.0.1:8000/api/show_todos')
+      this.$http.get('/api/show_todos')
         .then((response) => {
           let res = response.data
           if (res.error_num === 0) {
@@ -123,7 +123,7 @@ export default {
     },
     delete_todo (id) {
       let postdata = Qs.stringify({'Todo_id': id})
-      this.$http.post('http://127.0.0.1:8000/api/delete_todos', postdata)
+      this.$http.post('/api/delete_todos', postdata)
         .then((response) => {
           console.log(response)
           let res = response.data
@@ -137,7 +137,7 @@ export default {
     },
     editTodo () {
       let posData = Qs.stringify({'Todo_body': this.toBeEditBody})
-      this.$http.post('http://127.0.0.1:8000/api/edit_todos/' + this.toBeEditId, posData)
+      this.$http.post('/api/edit_todos/' + this.toBeEditId, posData)
         .then((response) => {
           console.log(response)
           let res = response.data
@@ -153,7 +153,7 @@ export default {
     openEditDialog (id) {
       this.openEditDialogFlag = true
       this.toBeEditId = id
-      this.$http.get('http://127.0.0.1:8000/api/edit_todos/' + this.toBeEditId)
+      this.$http.get('/api/edit_todos/' + this.toBeEditId)
         .then((response) => {
           let res = response.data
           if (res.error_num === 0) {
